@@ -1,0 +1,27 @@
+name: Build Windows x64
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-x64:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Compile standalone x64 executable (zero external deps)
+        shell: pwsh
+        run: |
+          powershell -ExecutionPolicy Bypass -File .\build.ps1
+          if (!(Test-Path .\bin\TecnoSpace3D.exe)) {
+            throw "Build failed: .\bin\TecnoSpace3D.exe was not generated."
+          }
+          $sizeKb = [math]::Round((Get-Item .\bin\TecnoSpace3D.exe).Length / 1KB, 2)
+          Write-Host "Built TecnoSpace3D.exe successfully ($sizeKb KB)"
+          if ($sizeKb -gt 150) {
+            throw "Binary size regression: expected lightweight standalone executable (<150 KB), got $sizeKb KB"
+          }

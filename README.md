@@ -1,8 +1,10 @@
 # TecnoSpace3D — Zero-Driver Multi-CAD 6DoF Bridge for Legacy 3D Mice
 
+[![Build Windows x64](https://github.com/LeonardoNardiko/TecnoSpace3D/actions/workflows/ci.yml/badge.svg)](https://github.com/LeonardoNardiko/TecnoSpace3D/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/LeonardoNardiko/TecnoSpace3D?color=0ea5e9)](https://github.com/LeonardoNardiko/TecnoSpace3D/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-0ea5e9.svg)](LICENSE)
 [![Platform: Windows 10/11 x64](https://img.shields.io/badge/Platform-Windows%2010%2F11%20x64-1e293b.svg)](#requirements)
-[![Languages: EN / PT-BR](https://img.shields.io/badge/UI-English%20%7C%20Portugu%C3%AAs-22c55e.svg)](#features)
+[![Ecosystem: TecnoPRO](https://img.shields.io/badge/Ecosystem-tecnopro.me-d97706.svg)](https://tecnopro.me)
 
 **TecnoSpace3D** breathes new life into discontinued **3Dconnexion SpaceBall 5000 USB** (and classic 6-DoF USB controllers) on **Windows 10 & Windows 11** across modern engineering CAD suites — **without installing legacy drivers** (`3DxSoftware v3.7.22`) and bypassing modern `3DxWare 10` hardware blocks.
 
@@ -18,6 +20,18 @@ Modern versions of `3DxWare 10` dropped hardware support for classic USB control
 1. **Direct Win32 HID (`hid.dll` + `OVERLAPPED` I/O):** Reads 6-axis translation/rotation reports and all 12 physical buttons directly from Windows HID without requiring Administrator privileges or kernel drivers.
 2. **125 Hz High-Resolution Router (`timeBeginPeriod(1)` + EMA Smoothing):** Interpolates alternating 62.5 Hz optical HID packets into smooth viewport motion while consuming ~0% CPU/GDI when idle in the system tray.
 3. **Automatic Foreground Multi-CAD Switching:** Detects the active CAD window in real time and drives its native viewport camera API without hijacking your regular mouse cursor.
+
+```mermaid
+flowchart LR
+    H["3Dconnexion USB 6DoF\n(Win32 hid.dll OVERLAPPED)"] --> R["125 Hz EMA Router\n& Axis/Button Mapper"]
+    R --> D{"Foreground Window\nAuto-Switch"}
+    D -->|COM StartDynamics| SW["SOLIDWORKS"]
+    D -->|Rodrigues Camera| INV["Inventor"]
+    D -->|BeginCameraDynamics| SE["Solid Edge"]
+    D -->|ActiveViewport| ACAD["AutoCAD"]
+    D -->|Shared HID| FC["FreeCAD 1.x"]
+    D -->|UDP :39030| BL["Blender 4/5"]
+```
 
 ---
 
